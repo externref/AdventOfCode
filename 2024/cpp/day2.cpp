@@ -61,3 +61,31 @@ int main() {
   std::cout << safe_count << std::endl;
   return 0;
 }
+
+extern "C" {
+void wrapper(int part) {
+  FILE *fileptr = fopen("inputs/2024/day2.txt", "r");
+  std::vector<std::vector<int>> reports;
+  char line[1024];
+
+  while (fgets(line, sizeof(line), fileptr)) {
+    std::stringstream ss(line);
+    std::vector<int> report;
+    int level;
+    while (ss >> level) {
+      report.push_back(level);
+    }
+    reports.push_back(report);
+  }
+  fclose(fileptr);
+
+  int safe_count = 0;
+  for (const auto &report : reports) {
+    auto value = part == 1 ? verify_v1(report) : verify_v2(report);
+    if (value) {
+      safe_count++;
+    }
+  }
+  std::cout << safe_count << std::endl;
+}
+}

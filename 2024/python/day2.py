@@ -1,7 +1,8 @@
 reports = [
     (lambda line: [int(x) for x in line.split()])(line)
-    for line in (open("inputs/day2.txt")).readlines()
+    for line in (open("inputs/2024/day2.txt")).readlines()
 ]
+
 
 def verify_v1(report: list[int]) -> bool:
     if not (
@@ -15,14 +16,17 @@ def verify_v1(report: list[int]) -> bool:
 
     return True
 
+
 def verify_v2(report: list[int]) -> bool:
     if verify_v1(report):
         return True
     for i in range(len(report)):
-        new_report = report[:i] + report[i+1:]
+        new_report = report[:i] + report[i + 1 :]
         if verify_v1(new_report):
             return True
     return False
 
 
-print(sum(verify_v2(report) for report in reports))
+main = lambda part: sum(
+    [(verify_v1(report) if part == 1 else verify_v2(report)) for report in reports]
+)

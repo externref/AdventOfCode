@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+
+import sys
+import os 
+import ctypes
+import importlib
+
+if len(sys.argv)==1:
+    print("- help menu.\n=============", 
+          
+        "./exec so.gen [FILENAME]: generates .so files",
+        "./exec run <YEAR> <LANGUAGE:(cpp,py)> <DAY> <PART>: runs a program",
+         "./exec format: formats all files", sep="\n" )
+    exit()
+if (arg:=sys.argv[1])=="so.gen":
+    if len(sys.argv)==3:
+        file = sys.argv[2]
+        os.system(f"g++ -shared -o shared_libs/2024/cpp/{file[:-4]}.so -fPIC 2024/cpp/{file}")
+        pass
+    for file in os.listdir("2024/cpp"):
+        os.system(f"g++ -shared -o shared_libs/2024/cpp/{file[:-4]}.so -fPIC 2024/cpp/{file}")
+elif arg=="run":
+    year,language, day, part = int(sys.argv[2]), sys.argv[3], int(sys.argv[4]), int(sys.argv[5])
+    if language=="cpp":
+        lib = ctypes.CDLL(f"shared_libs/{year}/cpp/day{day}.so")
+        lib.wrapper(part)
+    elif language in ["py", "python"]:
+        module = importlib.import_module(f"{year}.python.day{day}")
+        res = module.main(part)
+        print(res)
+elif arg=="format":
+    os.system("clang-format 2024/cpp/* -i ")
+    os.system("ruff format")
